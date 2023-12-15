@@ -331,8 +331,8 @@ github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 h1:tfuBGBXKqDEe
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572/go.mod h1:9Pwr4B2jHnOSGXyyzV8ROjYa2ojvAY6HCGYYfMoC3Ls=
 github.com/go-test/deep v1.1.0 h1:WOcxcdHcvdgThNXjw0t76K42FXTU7HpNQWHpA2HHNlg=
 github.com/go-test/deep v1.1.0/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
-github.com/gobars/sigstore v1.0.1 h1:ftlA7jiWeqHYk0oZ1JZj+JpXn7vszeHSLkdvSzFMGAU=
-github.com/gobars/sigstore v1.0.1/go.mod h1:DE1EAsQrF4e7tH21Pds/xQggtJ3Nuz9g4kf27DCytj4=
+github.com/gobars/sigstore v0.0.1 h1:NzvQf8jaB/JIsjWV7R27jyRnCgC0fI/qF1yIBw2JD4o=
+github.com/gobars/sigstore v0.0.1/go.mod h1:K5pr7kv124yGC9O+2e8Eoif52lu27XtgQW3qpxzomHo=
 github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
 github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=

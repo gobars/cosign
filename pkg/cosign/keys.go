@@ -141,13 +141,14 @@ func ImportKeyPair(keyPath string, pf PassFunc) (*KeysBytes, error) {
 }
 
 func marshalKeyPair(ptype string, keypair Keys, pf PassFunc, useSm2 bool) (key *KeysBytes, err error) {
+	var x509Encoded, pubBytes []byte
 
-	if (useSm2) {
+	if useSm2 {
 		key := keypair.private.(*sm2.PrivateKey)
-		x509Encoded, err := bx509.MarshalSm2UnecryptedPrivateKey(key)
+		x509Encoded, err = bx509.MarshalSm2UnecryptedPrivateKey(key)
+	} else {
+		x509Encoded, err = x509.MarshalPKCS8PrivateKey(keypair.private)
 	}
-
-	x509Encoded, err := x509.MarshalPKCS8PrivateKey(keypair.private)
 	if err != nil {
 		return nil, fmt.Errorf("x509 encoding private key: %w", err)
 	}
@@ -176,8 +177,18 @@ func marshalKeyPair(ptype string, keypair Keys, pf PassFunc, useSm2 bool) (key *
 		Type:  ptype,
 	})
 
-	// Now do the public key
-	pubBytes, err := cryptoutils.MarshalPublicKeyToPEM(keypair.public)
+	if useSm2 {
+		pubBytes, err = bx509.MarshalSm2PublicKey(keypair.public.(*sm2.PublicKey))
+		if err != nil {
+			return nil, err
+		}
+		pubBytes = cryptoutils.PEMEncode(cryptoutils.PublicKeyPEMType, pubBytes)
+
+	} else {
+		// Now do the public key
+		pubBytes, err = cryptoutils.MarshalPublicKeyToPEM(keypair.public)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +202,7 @@ func marshalKeyPair(ptype string, keypair Keys, pf PassFunc, useSm2 bool) (key *
 
 // TODO(jason): Move this to an internal package.
 func GenerateKeyPair(pf PassFunc, useSm2 bool) (*KeysBytes, error) {
-	if (!useSm2) {
+	if !useSm2 {
 		priv, err := GeneratePrivateKey()
 		if err != nil {
 			return nil, err
@@ -237,7 +248,7 @@ func LoadPrivateKey(key []byte, pass []byte) (signature.SignerVerifier, error) {
 		return nil, fmt.Errorf("decrypt: %w", err)
 	}
 
-	pk, err := x509.ParsePKCS8PrivateKey(x509Encoded)
+	pk, err := ParsePKCS8PrivateKey(x509Encoded)
 	if err != nil {
 		return nil, fmt.Errorf("parsing private key: %w", err)
 	}
@@ -248,6 +259,8 @@ func LoadPrivateKey(key []byte, pass []byte) (signature.SignerVerifier, error) {
 		return signature.LoadECDSASignerVerifier(pk, myhash.SHA256)
 	case ed25519.PrivateKey:
 		return signature.LoadED25519SignerVerifier(pk)
+	case *sm2.PrivateKey:
+		return signature.LoadSM2SignerVerifier(pk, myhash.SM3)
 	default:
 		return nil, errors.New("unsupported key type")
 	}
