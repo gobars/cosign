@@ -17,11 +17,11 @@ package attest
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"io"
 	"os"
 	"path"
@@ -29,6 +29,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/dsse"
+	signatureoptions "github.com/gobars/sigstore/pkg/signature/options"
 	"github.com/pkg/errors"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/rekor"
@@ -39,10 +43,6 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/cosign/attestation"
 	cbundle "github.com/sigstore/cosign/v2/pkg/cosign/bundle"
 	"github.com/sigstore/cosign/v2/pkg/types"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/dsse"
-	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
 )
 
 // nolint
@@ -102,7 +102,7 @@ func (c *AttestBlobCommand) Exec(ctx context.Context, artifactPath string) error
 	}
 
 	if c.ArtifactHash == "" {
-		digest, _, err := signature.ComputeDigestForSigning(bytes.NewReader(artifact), crypto.SHA256, []crypto.Hash{crypto.SHA256, crypto.SHA384})
+		digest, _, err := signature.ComputeDigestForSigning(bytes.NewReader(artifact), myhash.SHA256, []myhash.Hash{myhash.SHA256, myhash.SHA384})
 		if err != nil {
 			return err
 		}

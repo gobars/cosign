@@ -33,9 +33,9 @@ import (
 	"syscall"
 
 	"github.com/ThalesIgnite/crypto11"
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/miekg/pkcs11"
 	"github.com/sigstore/cosign/v2/pkg/cosign/env"
-	"github.com/sigstore/sigstore/pkg/signature"
 	"golang.org/x/term"
 )
 

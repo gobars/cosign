@@ -17,11 +17,11 @@ package ephemeral
 import (
 	"bytes"
 	"context"
-	"crypto"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"strings"
 	"testing"
 
-	"github.com/sigstore/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature"
 )
 
 func TestEphemeralSigner(t *testing.T) {
@@ -37,7 +37,7 @@ func TestEphemeralSigner(t *testing.T) {
 		t.Fatalf("Sign() returned error: %v", err)
 	}
 
-	verifier, err := signature.LoadVerifier(pub, crypto.SHA256)
+	verifier, err := signature.LoadVerifier(pub, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("signature.LoadVerifier(pub) returned error: %v", err)
 	}

@@ -19,8 +19,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 	"github.com/sigstore/cosign/v2/test"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
 func TestSplitPEMCertificateChain(t *testing.T) {

@@ -17,12 +17,12 @@ package verify
 
 import (
 	"context"
-	"crypto"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"io"
 	"os"
 	"path/filepath"
@@ -40,7 +40,7 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/oci/static"
 	sigs "github.com/sigstore/cosign/v2/pkg/signature"
 
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 )
 
 func isb64(data []byte) bool {
@@ -218,7 +218,7 @@ func (c *VerifyBlobCmd) Exec(ctx context.Context, blobRef string) error {
 			bundleCert, err := loadCertFromPEM(certBytes)
 			if err != nil {
 				// check if cert is actually a public key
-				co.SigVerifier, err = sigs.LoadPublicKeyRaw(certBytes, crypto.SHA256)
+				co.SigVerifier, err = sigs.LoadPublicKeyRaw(certBytes, myhash.SHA256)
 				if err != nil {
 					return fmt.Errorf("loading verifier from bundle: %w", err)
 				}

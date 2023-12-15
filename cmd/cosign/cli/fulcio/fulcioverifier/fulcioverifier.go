@@ -19,11 +19,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/fulcio"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/internal/ui"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 func NewSigner(ctx context.Context, ko options.KeyOpts, signer signature.SignerVerifier) (*fulcio.Signer, error) {

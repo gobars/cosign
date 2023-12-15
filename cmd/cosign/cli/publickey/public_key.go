@@ -20,13 +20,13 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/gobars/sigstore/pkg/signature"
+	signatureoptions "github.com/gobars/sigstore/pkg/signature/options"
 	"github.com/sigstore/cosign/v2/internal/ui"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/pkg/cosign/pivkey"
 	"github.com/sigstore/cosign/v2/pkg/cosign/pkcs11key"
 	sigs "github.com/sigstore/cosign/v2/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature"
-	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
 )
 
 type NamedWriter struct {

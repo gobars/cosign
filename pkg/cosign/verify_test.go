@@ -29,6 +29,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"io"
 	"net"
 	"net/url"
@@ -38,6 +39,10 @@ import (
 
 	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
 	"github.com/go-openapi/strfmt"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/options"
+	"github.com/gobars/sigstore/pkg/tuf"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/in-toto/in-toto-golang/in_toto"
 	"github.com/secure-systems-lab/go-securesystemslib/dsse"
@@ -52,10 +57,6 @@ import (
 	"github.com/sigstore/rekor/pkg/generated/client"
 	"github.com/sigstore/rekor/pkg/generated/models"
 	rtypes "github.com/sigstore/rekor/pkg/types"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/options"
-	"github.com/sigstore/sigstore/pkg/tuf"
 	"github.com/stretchr/testify/require"
 	"github.com/transparency-dev/merkle/rfc6962"
 )
@@ -240,7 +241,7 @@ func CreateTestBundle(ctx context.Context, t *testing.T, rekor signature.Signer,
 func TestVerifyImageSignatureWithNoChain(t *testing.T) {
 	ctx := context.Background()
 	rootCert, rootKey, _ := test.GenerateRootCa()
-	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
+	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("creating signer: %v", err)
 	}
@@ -283,7 +284,7 @@ func TestVerifyImageSignatureWithNoChain(t *testing.T) {
 func TestVerifyImageSignatureWithInvalidPublicKeyType(t *testing.T) {
 	ctx := context.Background()
 	rootCert, rootKey, _ := test.GenerateRootCa()
-	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
+	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("creating signer: %v", err)
 	}

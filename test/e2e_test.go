@@ -21,7 +21,6 @@ package test
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/x509"
@@ -29,6 +28,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"net/http/httptest"
 	"net/url"
 	"os"
@@ -51,6 +51,7 @@ import (
 	// Initialize all known client auth plugins
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	"github.com/gobars/sigstore/pkg/signature/payload"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/attach"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/attest"
@@ -69,7 +70,6 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/oci/mutate"
 	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
 	sigs "github.com/sigstore/cosign/v2/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/payload"
 	tsaclient "github.com/sigstore/timestamp-authority/pkg/client"
 	"github.com/sigstore/timestamp-authority/pkg/server"
 	"github.com/spf13/viper"
@@ -94,7 +94,7 @@ var verify = func(keyRef, imageRef string, checkClaims bool, annotations map[str
 		CheckClaims:   checkClaims,
 		Annotations:   sigs.AnnotationsMap{Annotations: annotations},
 		Attachment:    attachment,
-		HashAlgorithm: crypto.SHA256,
+		HashAlgorithm: myhash.SHA256,
 		IgnoreTlog:    true,
 		MaxWorkers:    10,
 	}
@@ -110,7 +110,7 @@ var verifyTSA = func(keyRef, imageRef string, checkClaims bool, annotations map[
 		CheckClaims:      checkClaims,
 		Annotations:      sigs.AnnotationsMap{Annotations: annotations},
 		Attachment:       attachment,
-		HashAlgorithm:    crypto.SHA256,
+		HashAlgorithm:    myhash.SHA256,
 		TSACertChainPath: tsaCertChain,
 		IgnoreTlog:       skipTlogVerify,
 		MaxWorkers:       10,
@@ -127,7 +127,7 @@ var verifyKeylessTSA = func(imageRef string, tsaCertChain string, skipSCT bool, 
 			CertOidcIssuerRegexp: ".*",
 			CertIdentityRegexp:   ".*",
 		},
-		HashAlgorithm:    crypto.SHA256,
+		HashAlgorithm:    myhash.SHA256,
 		TSACertChainPath: tsaCertChain,
 		IgnoreSCT:        skipSCT,
 		IgnoreTlog:       skipTlogVerify,
@@ -146,7 +146,7 @@ var verifyLocal = func(keyRef, path string, checkClaims bool, annotations map[st
 		CheckClaims:   checkClaims,
 		Annotations:   sigs.AnnotationsMap{Annotations: annotations},
 		Attachment:    attachment,
-		HashAlgorithm: crypto.SHA256,
+		HashAlgorithm: myhash.SHA256,
 		LocalImage:    true,
 		IgnoreTlog:    true,
 		MaxWorkers:    10,
@@ -874,7 +874,7 @@ func TestAttachWithRFC3161Timestamp(t *testing.T) {
 	payloadref := mkfile(b.String(), td, t)
 
 	h := sha256.Sum256(b.Bytes())
-	signature, _ := privKey.Sign(rand.Reader, h[:], crypto.SHA256)
+	signature, _ := privKey.Sign(rand.Reader, h[:], myhash.SHA256)
 	b64signature := base64.StdEncoding.EncodeToString([]byte(signature))
 	sigRef := mkfile(b64signature, td, t)
 	pemleafRef := mkfile(string(pemLeaf), td, t)
@@ -947,7 +947,7 @@ func TestAttachWithRekorBundle(t *testing.T) {
 	payloadref := mkfile(b.String(), td, t)
 
 	h := sha256.Sum256(b.Bytes())
-	signature, _ := privKey.Sign(rand.Reader, h[:], crypto.SHA256)
+	signature, _ := privKey.Sign(rand.Reader, h[:], myhash.SHA256)
 	b64signature := base64.StdEncoding.EncodeToString([]byte(signature))
 	sigRef := mkfile(b64signature, td, t)
 	pemleafRef := mkfile(string(pemLeaf), td, t)
@@ -2364,7 +2364,7 @@ func TestInvalidBundle(t *testing.T) {
 		KeyRef:        pubKeyPath,
 		RekorURL:      rekorURL,
 		CheckClaims:   true,
-		HashAlgorithm: crypto.SHA256,
+		HashAlgorithm: myhash.SHA256,
 		MaxWorkers:    10,
 	}
 	args := []string{img2}

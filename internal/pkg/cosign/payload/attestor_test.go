@@ -17,15 +17,15 @@ package payload
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"strings"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/secure-systems-lab/go-securesystemslib/dsse"
 	"github.com/sigstore/cosign/v2/pkg/types"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 func TestDSSEAttestor(t *testing.T) {
@@ -47,7 +47,7 @@ func TestDSSEAttestor(t *testing.T) {
 		t.Errorf("got MediaType() %q, wanted %q", gotMT, types.DssePayloadType)
 	}
 
-	verifier, err := signature.LoadVerifier(pub, crypto.SHA256)
+	verifier, err := signature.LoadVerifier(pub, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("signature.LoadVerifier(pub) returned error: %v", err)
 	}

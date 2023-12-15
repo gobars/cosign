@@ -25,12 +25,11 @@ import (
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli"
 	cosignError "github.com/sigstore/cosign/v2/cmd/cosign/errors"
 	"github.com/sigstore/cosign/v2/internal/ui"
-
 	// Register the provider-specific plugins
-	_ "github.com/sigstore/sigstore/pkg/signature/kms/aws"
-	_ "github.com/sigstore/sigstore/pkg/signature/kms/azure"
-	_ "github.com/sigstore/sigstore/pkg/signature/kms/gcp"
-	_ "github.com/sigstore/sigstore/pkg/signature/kms/hashivault"
+	//	_ "github.com/gobars/sigstore/pkg/signature/kms/aws"
+	//_ "github.com/gobars/sigstore/pkg/signature/kms/azure"
+	//_ "github.com/gobars/sigstore/pkg/signature/kms/gcp"
+	//_ "github.com/gobars/sigstore/pkg/signature/kms/hashivault"
 )
 
 func main() {

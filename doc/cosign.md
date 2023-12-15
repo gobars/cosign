@@ -29,8 +29,6 @@ A tool for Container Signing, Verification and Storage in an OCI registry.
 * [cosign load](cosign_load.md)	 - Load a signed image on disk to a remote registry
 * [cosign login](cosign_login.md)	 - Log in to a registry
 * [cosign manifest](cosign_manifest.md)	 - Provides utilities for discovering images in and performing operations on Kubernetes manifests
-* [cosign piv-tool](cosign_piv-tool.md)	 - Provides utilities for managing a hardware token
-* [cosign pkcs11-tool](cosign_pkcs11-tool.md)	 - Provides utilities for retrieving information from a PKCS11 token.
 * [cosign public-key](cosign_public-key.md)	 - Gets a public key from the key-pair.
 * [cosign save](cosign_save.md)	 - Save the container image and associated signatures to disk at the specified directory.
 * [cosign sign](cosign_sign.md)	 - Sign the supplied container image.

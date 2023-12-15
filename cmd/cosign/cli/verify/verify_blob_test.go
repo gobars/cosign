@@ -27,6 +27,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -38,6 +39,10 @@ import (
 	"github.com/cyberphone/json-canonicalization/go/src/webpki.org/jsoncanonicalizer"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/dsse"
+	signatureoptions "github.com/gobars/sigstore/pkg/signature/options"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/internal/pkg/cosign/tsa/mock"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
@@ -53,10 +58,6 @@ import (
 	hashedrekord_v001 "github.com/sigstore/rekor/pkg/types/hashedrekord/v0.0.1"
 	"github.com/sigstore/rekor/pkg/types/intoto"
 	"github.com/sigstore/rekor/pkg/types/rekord"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/dsse"
-	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
 )
 
 func TestSignaturesRef(t *testing.T) {
@@ -133,7 +134,7 @@ func TestVerifyBlob(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	signer, err := signature.LoadECDSASignerVerifier(leafPriv, crypto.SHA256)
+	signer, err := signature.LoadECDSASignerVerifier(leafPriv, myhash.SHA256)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,7 +165,7 @@ func TestVerifyBlob(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	rekorSigner, err := signature.LoadECDSASignerVerifier(rekorPriv, crypto.SHA256)
+	rekorSigner, err := signature.LoadECDSASignerVerifier(rekorPriv, myhash.SHA256)
 	if err != nil {
 		t.Fatal(err)
 	}

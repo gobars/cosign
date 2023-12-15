@@ -18,16 +18,19 @@ package verify
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"os"
 	"path/filepath"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/payload"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/fulcio"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
@@ -42,9 +45,6 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/cosign/pkcs11key"
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	sigs "github.com/sigstore/cosign/v2/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/payload"
 )
 
 // VerifyCommand verifies a signature on a supplied container image
@@ -72,7 +72,7 @@ type VerifyCommand struct {
 	Annotations                  sigs.AnnotationsMap
 	SignatureRef                 string
 	PayloadRef                   string
-	HashAlgorithm                crypto.Hash
+	HashAlgorithm                myhash.Hash
 	LocalImage                   bool
 	NameOptions                  []name.Option
 	Offline                      bool
@@ -99,7 +99,7 @@ func (c *VerifyCommand) Exec(ctx context.Context, images []string) (err error) {
 
 	// always default to sha256 if the algorithm hasn't been explicitly set
 	if c.HashAlgorithm == 0 {
-		c.HashAlgorithm = crypto.SHA256
+		c.HashAlgorithm = myhash.SHA256
 	}
 
 	var identities []cosign.Identity

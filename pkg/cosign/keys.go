@@ -27,13 +27,16 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
+	"github.com/gobars/sigstore/pkg/signature/sm2"
 	"os"
 	"path/filepath"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	bx509 "github.com/gobars/sigstore/pkg/signature/x509"
 	"github.com/secure-systems-lab/go-securesystemslib/encrypted"
 	"github.com/sigstore/cosign/v2/pkg/oci/static"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 const (
@@ -134,10 +137,16 @@ func ImportKeyPair(keyPath string, pf PassFunc) (*KeysBytes, error) {
 	default:
 		return nil, fmt.Errorf("unsupported private key")
 	}
-	return marshalKeyPair(p.Type, Keys{pk, pk.Public()}, pf)
+	return marshalKeyPair(p.Type, Keys{pk, pk.Public()}, pf, false)
 }
 
-func marshalKeyPair(ptype string, keypair Keys, pf PassFunc) (key *KeysBytes, err error) {
+func marshalKeyPair(ptype string, keypair Keys, pf PassFunc, useSm2 bool) (key *KeysBytes, err error) {
+
+	if (useSm2) {
+		key := keypair.private.(*sm2.PrivateKey)
+		x509Encoded, err := bx509.MarshalSm2UnecryptedPrivateKey(key)
+	}
+
 	x509Encoded, err := x509.MarshalPKCS8PrivateKey(keypair.private)
 	if err != nil {
 		return nil, fmt.Errorf("x509 encoding private key: %w", err)
@@ -181,14 +190,22 @@ func marshalKeyPair(ptype string, keypair Keys, pf PassFunc) (key *KeysBytes, er
 }
 
 // TODO(jason): Move this to an internal package.
-func GenerateKeyPair(pf PassFunc) (*KeysBytes, error) {
-	priv, err := GeneratePrivateKey()
-	if err != nil {
-		return nil, err
+func GenerateKeyPair(pf PassFunc, useSm2 bool) (*KeysBytes, error) {
+	if (!useSm2) {
+		priv, err := GeneratePrivateKey()
+		if err != nil {
+			return nil, err
+		}
+		return marshalKeyPair(SigstorePrivateKeyPemType, Keys{priv, priv.Public()}, pf, useSm2)
+	} else {
+		priv, err := sm2.GenerateKey(rand.Reader)
+		if err != nil {
+			return nil, err
+		}
+		return marshalKeyPair(SigstorePrivateKeyPemType, Keys{priv, priv.Public()}, pf, useSm2)
 	}
 
 	// Emit SIGSTORE keys by default
-	return marshalKeyPair(SigstorePrivateKeyPemType, Keys{priv, priv.Public()}, pf)
 }
 
 // TODO(jason): Move this to an internal package.
@@ -226,9 +243,9 @@ func LoadPrivateKey(key []byte, pass []byte) (signature.SignerVerifier, error) {
 	}
 	switch pk := pk.(type) {
 	case *rsa.PrivateKey:
-		return signature.LoadRSAPKCS1v15SignerVerifier(pk, crypto.SHA256)
+		return signature.LoadRSAPKCS1v15SignerVerifier(pk, myhash.SHA256)
 	case *ecdsa.PrivateKey:
-		return signature.LoadECDSASignerVerifier(pk, crypto.SHA256)
+		return signature.LoadECDSASignerVerifier(pk, myhash.SHA256)
 	case ed25519.PrivateKey:
 		return signature.LoadED25519SignerVerifier(pk)
 	default:

@@ -24,6 +24,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	signatureoptions "github.com/gobars/sigstore/pkg/signature/options"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/rekor"
 	internal "github.com/sigstore/cosign/v2/internal/pkg/cosign"
@@ -32,8 +34,6 @@ import (
 	"github.com/sigstore/cosign/v2/internal/ui"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	cbundle "github.com/sigstore/cosign/v2/pkg/cosign/bundle"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
 )
 
 // nolint

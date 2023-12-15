@@ -17,17 +17,19 @@ package attest
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/dsse"
 	"github.com/in-toto/in-toto-golang/in_toto"
 	"github.com/pkg/errors"
 	ssldsse "github.com/secure-systems-lab/go-securesystemslib/dsse"
@@ -36,8 +38,6 @@ import (
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/test"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/dsse"
 )
 
 // TestAttestBlobCmdLocalKeyAndSk verifies the AttestBlobCmd returns an error
@@ -198,7 +198,7 @@ func TestAttestBlob(t *testing.T) {
 
 	blob := []byte("foo")
 	blobPath := writeFile(t, td, string(blob), "foo.txt")
-	digest, _, _ := signature.ComputeDigestForSigning(bytes.NewReader(blob), crypto.SHA256, []crypto.Hash{crypto.SHA256, crypto.SHA384})
+	digest, _, _ := signature.ComputeDigestForSigning(bytes.NewReader(blob), myhash.SHA256, []myhash.Hash{myhash.SHA256, myhash.SHA384})
 	blobDigest := strings.ToLower(hex.EncodeToString(digest))
 
 	predicates := map[string]string{}
@@ -250,7 +250,7 @@ func TestAttestBlob(t *testing.T) {
 			}
 
 			// Load a verifier and DSSE verify
-			verifier, _ := signature.LoadVerifierFromPEMFile(pubKeyRef, crypto.SHA256)
+			verifier, _ := signature.LoadVerifierFromPEMFile(pubKeyRef, myhash.SHA256)
 			dssev, err := ssldsse.NewEnvelopeVerifier(&dsse.VerifierAdapter{SignatureVerifier: verifier})
 			if err != nil {
 				t.Fatalf("new envelope verifier: %v", err)

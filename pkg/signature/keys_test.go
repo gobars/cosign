@@ -16,20 +16,20 @@ package signature
 
 import (
 	"context"
-	"crypto"
 	"crypto/x509/pkix"
 	"errors"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"net"
 	"net/url"
 	"os"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	sigsignature "github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/kms"
 	"github.com/sigstore/cosign/v2/pkg/blob"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/test"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	sigsignature "github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/kms"
 )
 
 func generateKeyFile(t *testing.T, tmpDir string, pf cosign.PassFunc) (privFile, pubFile string) {
@@ -146,7 +146,7 @@ func TestSignerVerifierFromEnvVar(t *testing.T) {
 }
 
 func TestVerifierForKeyRefError(t *testing.T) {
-	kms.AddProvider("errorkms://", func(ctx context.Context, _ string, hf crypto.Hash, _ ...sigsignature.RPCOption) (kms.SignerVerifier, error) {
+	kms.AddProvider("errorkms://", func(ctx context.Context, _ string, hf myhash.Hash, _ ...sigsignature.RPCOption) (kms.SignerVerifier, error) {
 		return nil, errors.New("bad")
 	})
 	var uerr *blob.UnrecognizedSchemeError

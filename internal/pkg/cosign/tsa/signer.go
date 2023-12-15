@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"context"
 	"crypto"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"io"
 	"strconv"
 	"strings"
@@ -30,13 +31,13 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	"github.com/sigstore/cosign/v2/pkg/oci/mutate"
 
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 )
 
 // GetTimestampedSignature queries a timestamp authority to fetch an RFC3161 timestamp. sigBytes is an
 // opaque blob, but is typically a signature over an artifact.
 func GetTimestampedSignature(sigBytes []byte, tsaClient client.TimestampAuthorityClient) ([]byte, error) {
-	requestBytes, err := createTimestampAuthorityRequest(sigBytes, crypto.SHA256, "")
+	requestBytes, err := createTimestampAuthorityRequest(sigBytes, myhash.SHA256, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating timestamp request")
 	}
@@ -81,9 +82,9 @@ func (rs *signerWrapper) Sign(ctx context.Context, payload io.Reader) (oci.Signa
 	return newSig, pub, nil
 }
 
-func createTimestampAuthorityRequest(artifactBytes []byte, hash crypto.Hash, policyStr string) ([]byte, error) {
+func createTimestampAuthorityRequest(artifactBytes []byte, hash myhash.Hash, policyStr string) ([]byte, error) {
 	reqOpts := &timestamp.RequestOptions{
-		Hash:         hash,
+		Hash:         crypto.Hash(hash),
 		Certificates: true, // if the timestamp response should contain the leaf certificate
 	}
 	// specify a pseudo-random nonce in the request

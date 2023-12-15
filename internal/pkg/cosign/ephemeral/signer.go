@@ -20,13 +20,14 @@ import (
 	"crypto"
 	"encoding/base64"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"io"
 
+	"github.com/gobars/sigstore/pkg/signature"
 	icosign "github.com/sigstore/cosign/v2/internal/pkg/cosign"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	"github.com/sigstore/cosign/v2/pkg/oci/static"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 type ephemeralSigner struct {
@@ -67,7 +68,7 @@ func NewSigner() (icosign.Signer, error) {
 	if err != nil {
 		return nil, fmt.Errorf("generating cert: %w", err)
 	}
-	s, err := signature.LoadECDSASignerVerifier(priv, crypto.SHA256)
+	s, err := signature.LoadECDSASignerVerifier(priv, myhash.SHA256)
 	if err != nil {
 		return nil, fmt.Errorf("creating a SignerVerifier from ephemeral key: %w", err)
 	}

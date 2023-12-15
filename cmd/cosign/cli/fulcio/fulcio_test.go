@@ -17,24 +17,24 @@ package fulcio
 
 import (
 	"context"
-	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/oauthflow"
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/test"
 	"github.com/sigstore/fulcio/pkg/api"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/oauthflow"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 type testFlow struct {
@@ -71,7 +71,7 @@ func TestGetCertForOauthID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Could not generate ecdsa keypair for test: %v", err)
 	}
-	sv, err := signature.LoadECDSASignerVerifier(testKey, crypto.SHA256)
+	sv, err := signature.LoadECDSASignerVerifier(testKey, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("Could not create a signer: %v", err)
 	}
@@ -211,7 +211,7 @@ func TestNewSigner(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sv, err := signature.LoadECDSASignerVerifier(privKey, crypto.SHA256)
+	sv, err := signature.LoadECDSASignerVerifier(privKey, myhash.SHA256)
 	if err != nil {
 		t.Fatal(err)
 	}

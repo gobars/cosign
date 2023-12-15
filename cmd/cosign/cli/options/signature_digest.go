@@ -16,8 +16,8 @@
 package options
 
 import (
-	"crypto"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"sort"
 	"strings"
 
@@ -27,11 +27,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var supportedSignatureAlgorithms = map[string]crypto.Hash{
-	"sha224": crypto.SHA224,
-	"sha256": crypto.SHA256,
-	"sha384": crypto.SHA384,
-	"sha512": crypto.SHA512,
+var supportedSignatureAlgorithms = map[string]myhash.Hash{
+	"sha224": myhash.SHA224,
+	"sha256": myhash.SHA256,
+	"sha384": myhash.SHA384,
+	"sha512": myhash.SHA512,
 }
 
 func supportedSignatureAlgorithmNames() []string {
@@ -65,20 +65,20 @@ func (o *SignatureDigestOptions) AddFlags(cmd *cobra.Command) {
 // HashAlgorithm converts the algorithm's name - provided as a string - into a crypto.Hash algorithm.
 // Returns an error if the algorithm name doesn't match a supported algorithm, and defaults to SHA256
 // in the event that the given algorithm is invalid.
-func (o *SignatureDigestOptions) HashAlgorithm() (crypto.Hash, error) {
+func (o *SignatureDigestOptions) HashAlgorithm() (myhash.Hash, error) {
 	normalizedAlgo := strings.ToLower(strings.TrimSpace(o.AlgorithmName))
 
 	if normalizedAlgo == "" {
-		return crypto.SHA256, nil
+		return myhash.SHA256, nil
 	}
 
 	algo, exists := supportedSignatureAlgorithms[normalizedAlgo]
 	if !exists {
-		return crypto.SHA256, fmt.Errorf("unknown digest algorithm: %s", o.AlgorithmName)
+		return myhash.SHA256, fmt.Errorf("unknown digest algorithm: %s", o.AlgorithmName)
 	}
 
 	if !algo.Available() {
-		return crypto.SHA256, fmt.Errorf("hash %q is not available on this platform", o.AlgorithmName)
+		return myhash.SHA256, fmt.Errorf("hash %q is not available on this platform", o.AlgorithmName)
 	}
 
 	return algo, nil

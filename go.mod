@@ -15,6 +15,7 @@ require (
 	github.com/go-openapi/strfmt v0.21.9
 	github.com/go-openapi/swag v0.22.4
 	github.com/go-piv/piv-go v1.11.0
+	github.com/gobars/sigstore v1.0.1
 	github.com/google/certificate-transparency-go v1.1.7
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-containerregistry v0.17.0
@@ -32,11 +33,10 @@ require (
 	github.com/secure-systems-lab/go-securesystemslib v0.7.0
 	github.com/sigstore/fulcio v1.4.3
 	github.com/sigstore/rekor v1.3.4
-	github.com/sigstore/sigstore v1.7.6
-	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.7.6
-	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.7.6
-	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.7.6
-	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.7.6
+	//github.com/gobars/sigstore/pkg/signature/kms/aws v1.0.0
+	//github.com/gobars/sigstore/pkg/signature/kms/azure v1.0.0
+	//github.com/gobars/sigstore/pkg/signature/kms/gcp v1.0.0
+	//github.com/gobars/sigstore/pkg/signature/kms/hashivault v1.0.0
 	github.com/sigstore/timestamp-authority v1.2.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
@@ -223,6 +223,11 @@ require (
 	github.com/sassoftware/relic v7.2.1+incompatible // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/shibumi/go-pathspec v1.3.0 // indirect
+	github.com/sigstore/sigstore v1.7.5 // indirect
+	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.7.5 // indirect
+	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.7.5 // indirect
+	github.com/sigstore/sigstore/pkg/signature/kms/gcp v1.7.5 // indirect
+	github.com/sigstore/sigstore/pkg/signature/kms/hashivault v1.7.5 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect

@@ -65,7 +65,7 @@ func (g *Gh) PutSecret(ctx context.Context, ref string, pf cosign.PassFunc) erro
 		client = github.NewClient(httpClient)
 	}
 
-	keys, err := cosign.GenerateKeyPair(pf)
+	keys, err := cosign.GenerateKeyPair(pf, false)
 	if err != nil {
 		return fmt.Errorf("generating key pair: %w", err)
 	}

@@ -22,9 +22,9 @@ import (
 	"os"
 	"sync"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/fulcioroots"
 	"github.com/sigstore/cosign/v2/pkg/cosign/env"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/fulcioroots"
 )
 
 var (

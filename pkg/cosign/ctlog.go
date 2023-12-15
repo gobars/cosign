@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gobars/sigstore/pkg/tuf"
 	"github.com/sigstore/cosign/v2/pkg/cosign/env"
-	"github.com/sigstore/sigstore/pkg/tuf"
 )
 
 // This is the CT log public key target name

@@ -25,10 +25,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/tuf"
 	ttestdata "github.com/google/certificate-transparency-go/trillian/testdata"
 	"github.com/sigstore/rekor/pkg/generated/models"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/tuf"
 )
 
 var (

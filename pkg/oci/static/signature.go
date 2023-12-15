@@ -21,11 +21,11 @@ import (
 	"encoding/base64"
 	"io"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/types"
 	"github.com/sigstore/cosign/v2/pkg/cosign/bundle"
 	"github.com/sigstore/cosign/v2/pkg/oci"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
 const (

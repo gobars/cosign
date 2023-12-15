@@ -17,12 +17,12 @@ package payload
 import (
 	"bytes"
 	"context"
-	"crypto"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"strings"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
-	"github.com/sigstore/sigstore/pkg/signature"
 )
 
 func mustGetNewSigner(t *testing.T) signature.Signer {
@@ -31,7 +31,7 @@ func mustGetNewSigner(t *testing.T) signature.Signer {
 	if err != nil {
 		t.Fatalf("cosign.GeneratePrivateKey() failed: %v", err)
 	}
-	s, err := signature.LoadECDSASignerVerifier(priv, crypto.SHA256)
+	s, err := signature.LoadECDSASignerVerifier(priv, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("signature.LoadECDSASignerVerifier(key, crypto.SHA256) failed: %v", err)
 	}
@@ -48,7 +48,7 @@ func TestSigner(t *testing.T) {
 		t.Fatalf("Sign() returned error: %v", err)
 	}
 
-	verifier, err := signature.LoadVerifier(pub, crypto.SHA256)
+	verifier, err := signature.LoadVerifier(pub, myhash.SHA256)
 	if err != nil {
 		t.Fatalf("signature.LoadVerifier(pub) returned error: %v", err)
 	}

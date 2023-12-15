@@ -20,14 +20,16 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/asn1"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
+	"io"
 	"time"
 
 	"github.com/pkg/errors"
 
 	"github.com/digitorus/timestamp"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
 	"github.com/sigstore/cosign/v2/internal/pkg/cosign/tsa/client"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
 	"github.com/sigstore/timestamp-authority/pkg/signer"
 )
 
@@ -38,7 +40,7 @@ import (
 type TSAClient struct {
 	client.TimestampAuthorityClient
 
-	Signer    crypto.Signer
+	Signer    myhash.Signer
 	CertChain []*x509.Certificate
 	Time      time.Time
 	Message   []byte
@@ -51,19 +53,19 @@ type TSAClientOptions struct {
 	// Message is the pre-hashed message to sign over, typically a raw signature.
 	Message []byte
 	// Signer is an optional signer created out of band. Client creates one if not set.
-	Signer crypto.Signer
+	Signer myhash.Signer
 }
 
 func NewTSAClient(o TSAClientOptions) (*TSAClient, error) {
 	sv := o.Signer
 	if sv == nil {
 		var err error
-		sv, _, err = signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
+		sv, _, err = signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, myhash.SHA256)
 		if err != nil {
 			return nil, err
 		}
 	}
-	certChain, err := signer.NewTimestampingCertWithChain(sv)
+	certChain, err := signer.NewTimestampingCertWithChain(toSigner(sv))
 	if err != nil {
 		return nil, errors.Wrap(err, "generating timestamping cert chain")
 	}
@@ -117,5 +119,31 @@ func (c *TSAClient) GetTimestampResponse(tsq []byte) ([]byte, error) {
 		tsStruct.Time = c.Time
 	}
 
-	return tsStruct.CreateResponseWithOpts(c.CertChain[0], c.Signer, crypto.SHA256)
+	return tsStruct.CreateResponseWithOpts(c.CertChain[0], toSigner(c.Signer), crypto.SHA256)
+}
+
+type SignerAdapter struct {
+	signer myhash.Signer
+}
+
+type SignerOptsAdapter struct {
+	opts crypto.SignerOpts
+}
+
+func (s SignerOptsAdapter) HashFunc() myhash.Hash {
+	return myhash.Hash(s.opts.HashFunc())
+}
+
+func (s SignerAdapter) Public() crypto.PublicKey {
+	return s.signer.Public()
+}
+
+func (s SignerAdapter) Sign(rand io.Reader, digest []byte, opts crypto.SignerOpts) (signature []byte, err error) {
+	return s.signer.Sign(rand, digest, SignerOptsAdapter{opts: opts})
+}
+
+func toSigner(s myhash.Signer) crypto.Signer {
+	return SignerAdapter{
+		signer: s,
+	}
 }

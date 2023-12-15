@@ -17,7 +17,6 @@ package cosign
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"crypto/ecdsa"
 	"crypto/sha256"
 	"crypto/x509"
@@ -27,6 +26,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"net/http"
 	"os"
 	"regexp"
@@ -50,6 +50,11 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/remote/transport"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature/dsse"
+	"github.com/gobars/sigstore/pkg/signature/options"
+	"github.com/gobars/sigstore/pkg/tuf"
 	ssldsse "github.com/secure-systems-lab/go-securesystemslib/dsse"
 	ociexperimental "github.com/sigstore/cosign/v2/internal/pkg/oci/remote"
 	"github.com/sigstore/cosign/v2/internal/ui"
@@ -64,11 +69,6 @@ import (
 	intoto_v001 "github.com/sigstore/rekor/pkg/types/intoto/v0.0.1"
 	intoto_v002 "github.com/sigstore/rekor/pkg/types/intoto/v0.0.2"
 	rekord_v001 "github.com/sigstore/rekor/pkg/types/rekord/v0.0.1"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/signature/dsse"
-	"github.com/sigstore/sigstore/pkg/signature/options"
-	"github.com/sigstore/sigstore/pkg/tuf"
 	tsaverification "github.com/sigstore/timestamp-authority/pkg/verification"
 )
 
@@ -219,7 +219,7 @@ func verifyOCISignature(ctx context.Context, verifier signature.Verifier, sig pa
 // ValidateAndUnpackCert creates a Verifier from a certificate. Veries that the certificate
 // chains up to a trusted root. Optionally verifies the subject and issuer of the certificate.
 func ValidateAndUnpackCert(cert *x509.Certificate, co *CheckOpts) (signature.Verifier, error) {
-	verifier, err := signature.LoadVerifier(cert.PublicKey, crypto.SHA256)
+	verifier, err := signature.LoadVerifier(cert.PublicKey, myhash.SHA256)
 	if err != nil {
 		return nil, fmt.Errorf("invalid certificate found on signature: %w", err)
 	}

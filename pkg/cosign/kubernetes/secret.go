@@ -52,13 +52,13 @@ func GetKeyPairSecret(ctx context.Context, k8sRef string) (*v1.Secret, error) {
 	return s, nil
 }
 
-func KeyPairSecret(ctx context.Context, k8sRef string, pf cosign.PassFunc) error {
+func KeyPairSecret(ctx context.Context, k8sRef string, pf cosign.PassFunc, useSm2 bool) error {
 	namespace, name, err := parseRef(k8sRef)
 	if err != nil {
 		return err
 	}
 	// now, generate the key in memory
-	keys, err := cosign.GenerateKeyPair(pf)
+	keys, err := cosign.GenerateKeyPair(pf, useSm2)
 	if err != nil {
 		return fmt.Errorf("generating key pair: %w", err)
 	}

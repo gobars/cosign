@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"crypto/x509"
 
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 )
 
 // SplitPEMCertificateChain returns a list of leaf (non-CA) certificates, a certificate pool for

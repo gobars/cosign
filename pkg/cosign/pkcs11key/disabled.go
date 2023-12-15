@@ -24,7 +24,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/sigstore/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature"
 )
 
 // The empty struct is used so this file never imports piv-go which is

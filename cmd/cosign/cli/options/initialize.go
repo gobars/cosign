@@ -16,7 +16,7 @@
 package options
 
 import (
-	"github.com/sigstore/sigstore/pkg/tuf"
+	"github.com/gobars/sigstore/pkg/tuf"
 	"github.com/spf13/cobra"
 )
 

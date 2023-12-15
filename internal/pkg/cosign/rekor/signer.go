@@ -29,9 +29,9 @@ import (
 	"github.com/sigstore/cosign/v2/pkg/oci"
 	"github.com/sigstore/cosign/v2/pkg/oci/mutate"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 	"github.com/sigstore/rekor/pkg/generated/client"
 	"github.com/sigstore/rekor/pkg/generated/models"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
 type tlogUploadFn func(*client.Rekor, []byte) (*models.LogEntryAnon, error)

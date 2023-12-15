@@ -21,8 +21,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/gobars/sigstore/pkg/tuf"
 	"github.com/sigstore/cosign/v2/pkg/blob"
-	"github.com/sigstore/sigstore/pkg/tuf"
 )
 
 func DoInitialize(ctx context.Context, root, mirror string) error {

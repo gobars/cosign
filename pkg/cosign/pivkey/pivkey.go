@@ -34,7 +34,7 @@ import (
 	"github.com/go-piv/piv-go/piv"
 	"golang.org/x/term"
 
-	"github.com/sigstore/sigstore/pkg/signature"
+	"github.com/gobars/sigstore/pkg/signature"
 )
 
 var (

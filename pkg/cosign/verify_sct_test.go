@@ -30,10 +30,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 	ct "github.com/google/certificate-transparency-go"
 	"github.com/google/certificate-transparency-go/testdata"
 	"github.com/google/certificate-transparency-go/tls"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
 // TODO: Move back into verify_test.go once the test cert has been regenerated

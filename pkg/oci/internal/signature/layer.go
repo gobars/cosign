@@ -23,10 +23,10 @@ import (
 	"io"
 	"strings"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/sigstore/cosign/v2/pkg/cosign/bundle"
 	"github.com/sigstore/cosign/v2/pkg/oci"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
 )
 
 const (

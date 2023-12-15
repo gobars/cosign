@@ -38,7 +38,7 @@ func New() *Gl {
 }
 
 func (g *Gl) PutSecret(ctx context.Context, ref string, pf cosign.PassFunc) error {
-	keys, err := cosign.GenerateKeyPair(pf)
+	keys, err := cosign.GenerateKeyPair(pf, false)
 	if err != nil {
 		return fmt.Errorf("generating key pair: %w", err)
 	}

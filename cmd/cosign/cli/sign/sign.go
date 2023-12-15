@@ -18,13 +18,13 @@ package sign
 import (
 	"bytes"
 	"context"
-	"crypto"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/gobars/sigstore/pkg/signature/myhash"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +33,10 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 
+	"github.com/gobars/sigstore/pkg/cryptoutils"
+	"github.com/gobars/sigstore/pkg/signature"
+	signatureoptions "github.com/gobars/sigstore/pkg/signature/options"
+	sigPayload "github.com/gobars/sigstore/pkg/signature/payload"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/fulcio"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/fulcio/fulcioverifier"
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/options"
@@ -54,10 +58,6 @@ import (
 	ociremote "github.com/sigstore/cosign/v2/pkg/oci/remote"
 	"github.com/sigstore/cosign/v2/pkg/oci/walk"
 	sigs "github.com/sigstore/cosign/v2/pkg/signature"
-	"github.com/sigstore/sigstore/pkg/cryptoutils"
-	"github.com/sigstore/sigstore/pkg/signature"
-	signatureoptions "github.com/sigstore/sigstore/pkg/signature/options"
-	sigPayload "github.com/sigstore/sigstore/pkg/signature/payload"
 
 	// Loads OIDC providers
 	_ "github.com/sigstore/cosign/v2/pkg/providers/all"
@@ -526,7 +526,7 @@ func signerFromNewKey() (*SignerVerifier, error) {
 	if err != nil {
 		return nil, fmt.Errorf("generating cert: %w", err)
 	}
-	sv, err := signature.LoadECDSASignerVerifier(privKey, crypto.SHA256)
+	sv, err := signature.LoadECDSASignerVerifier(privKey, myhash.SHA256)
 	if err != nil {
 		return nil, err
 	}

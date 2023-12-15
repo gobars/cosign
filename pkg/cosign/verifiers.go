@@ -25,8 +25,8 @@ import (
 	"github.com/in-toto/in-toto-golang/in_toto"
 	"github.com/secure-systems-lab/go-securesystemslib/dsse"
 
+	"github.com/gobars/sigstore/pkg/signature/payload"
 	"github.com/sigstore/cosign/v2/pkg/oci"
-	"github.com/sigstore/sigstore/pkg/signature/payload"
 )
 
 // SimpleClaimVerifier verifies that sig.Payload() is a SimpleContainerImage payload which references the given image digest and contains the given annotations.
